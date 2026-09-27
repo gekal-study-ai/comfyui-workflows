@@ -1,7 +1,7 @@
 {
     "id": "91f6bbe2-ed41-4fd6-bac7-71d5b5864ecb",
     "revision": 1,
-    "last_node_id": 469,
+    "last_node_id": 470,
     "last_link_id": 743,
     "nodes": [
         {
@@ -337,8 +337,8 @@
                 ]
             },
             "widgets_values": [
-                "This is a wide-angle, photorealistic surreal landscape painting. The foreground and mid-ground remain exactly the same as in image_1.png. In the background, the original peaks have been replaced by an iconic, symmetrical, and sharply defined snow-capped Mount Fuji, positioned in the center of the composition. All distinctive blue vegetation, sandy details, and bright daylight effects remain unchanged; the only modification is the substitution of the background mountains with the iconic Mount Fuji.",
-                "",
+                "Replace only the mountains on the horizon of Picture 1 with an iconic, symmetrical, sharply defined snow-capped Mount Fuji, centered in the background, matching the existing light direction, haze and perspective.\n\nKeep everything else in Picture 1 exactly as it is: the same subject, pose and expression, the same foreground and mid-ground, the same composition, framing and crop, the same colors, exposure and shadows, and the same photographic texture. Do not restyle, re-render or reinterpret the rest of the image.",
+                "redrawing the whole scene, replacing the subject, different person, different composition, different crop, style transfer, illustration, painting, cartoon, 3d render, oversaturated, blurry, low quality, jpeg artifacts, watermark, text",
                 932654022600354,
                 "qwen_image_edit_2509_fp8_e4m3fn.safetensors",
                 "qwen_2.5_vl_7b_fp8_scaled.safetensors",
@@ -356,6 +356,30 @@
                 "value": true,
                 "lora_name_1": "Qwen-Image-Edit-2509-Lightning-4steps-V1.0-bf16.safetensors"
             }
+        },
+        {
+            "id": 470,
+            "type": "MarkdownNote",
+            "pos": [
+                -420,
+                450
+            ],
+            "size": [
+                460,
+                620
+            ],
+            "flags": {},
+            "order": 4,
+            "mode": 0,
+            "inputs": [],
+            "outputs": [],
+            "title": "Note: プロンプトの書き方",
+            "properties": {},
+            "widgets_values": [
+                "## プロンプトの書き方（入力画像が無視されるとき）\n\nQwen-Image-Edit は「画像全体の説明」を渡すと **編集ではなく再生成**に寄り、\n入力画像が無視されたように見えます。次の形で書くと直ります。\n\n**1. 命令から始める**\n\n- ✅ `Replace only the sky of Picture 1 with ...`\n- ❌ `This is a wide-angle photorealistic landscape. In the background ...`\n\n**2. 入力画像は `Picture 1` と呼ぶ**\n\n2509 は複数画像入力に対応しており、`Picture 1` / `Picture 2` / `Picture 3` が\nそれぞれ `image1` / `image2` / `image3` に対応します。\n`image_1.png` のようなファイル名で呼んでも参照されません。\n\n**3. 変えない要素を明示する**\n\n`Keep everything else in Picture 1 exactly as it is: the same subject, pose,\ncomposition, framing, colors, lighting and photographic texture.`\n\n**4. 1回の編集は1つの意図だけ**\n\n背景の差し替えと服の変更を同時に頼むと、どちらも崩れやすくなります。\n\n**5. 入力画像に無いものを書かない**\n\nテンプレート同梱のサンプル用プロンプト（青い植物・砂地など）を\n自分の写真に対してそのまま使うと、モデルがそれを描き起こすため\n別画像のように見えます。\n\n## negative_prompt について\n\n`enable_turbo_mode` が ON のとき CFG は 1.0 なので、**negative_prompt は効きません**。\n効かせたいときは `enable_turbo_mode` を OFF（steps 20 / CFG 4）にしてください。\n"
+            ],
+            "color": "#432",
+            "bgcolor": "#653"
         }
     ],
     "links": [
