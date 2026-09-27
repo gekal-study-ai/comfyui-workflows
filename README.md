@@ -14,6 +14,29 @@ ComfyUI で使っているワークフロー（`.json`）の置き場です。�
 
 > モデルが未配置だとノード上のファイル選択が赤くなります。その場合はファイル名と保存先を見直してください。
 
+## Apple Silicon（MPS）について
+
+動画3本は **MPS で動く 16bit 系のモデルを指定してあります**。PyTorch の MPS バックエンドは
+`Float8_e4m3fn` に対応しておらず、CUDA 向けの `int8_convrot` / `nvfp4_awq` / `fp4_mixed` も
+同様に動かないため、それぞれ bf16 / fp16 版に置き換えています。
+
+| ワークフロー | 置き換えたモデル | 変更前（CUDA 向け） |
+|---|---|---|
+| Wan2.2 I2V | `umt5_xxl_fp16.safetensors` | `umt5_xxl_fp8_e4m3fn_scaled.safetensors` |
+| MiniMax H3 | `minimax_h3_fl2va_pruned_bf16.safetensors` | `minimax_h3_fl2va_pruned_int8_convrot.safetensors` |
+| MiniMax H3 | `qwen3vl_32b_minimax_h3_bf16.safetensors` | `qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors` |
+| MiniMax H3 | `minimax_h3_video_vae_fp16.safetensors` | `minimax_h3_video_vae_int8_convrot.safetensors` |
+| LTX-2.3 | `gemma_3_12B_it.safetensors` | `gemma_3_12B_it_fp4_mixed.safetensors` |
+
+**MiniMax H3 は 16bit にすると合計約 97GB になります**（本体 40GB + Text Encoder 51.5GB +
+映像 VAE 5.2GB）。ユニファイドメモリに載る Mac でないと現実的ではないので、CUDA 機で使うなら
+上表の右列に戻してください。他の2本は Wan2.2 の Text Encoder が約 11GB、
+LTX-2.3 の Gemma が約 24GB（fp4 版は約 9.4GB）です。
+
+画像系のワークフローは CUDA 向けの量子化モデルのまま未変更です
+（`qwen_image_edit_2509_fp8_e4m3fn` / `qwen_2.5_vl_7b_fp8_scaled` /
+`qwen_image_2.1_int8_convrot` / `qwen3vl_8b_int8_convrot`）。
+
 ## ワークフロー一覧
 
 | ファイル | 種別 | モデル | 出力先 |
@@ -239,7 +262,7 @@ ComfyUI/
     ├── loras/
     │   ├── wan2.2_i2v_lightx2v_4steps_lora_v1_high_noise.safetensors
     │   └── wan2.2_i2v_lightx2v_4steps_lora_v1_low_noise.safetensors
-    ├── text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors
+    ├── text_encoders/umt5_xxl_fp16.safetensors
     └── vae/wan_2.1_vae.safetensors
 ```
 
@@ -277,9 +300,9 @@ ComfyUI/
 
 | 項目 | 値 |
 |---|---|
-| Diffusion Model | `minimax_h3_fl2va_pruned_int8_convrot.safetensors` |
-| Text Encoder | `qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors`（type: `minimax`） |
-| VAE（映像 / 音声） | `minimax_h3_video_vae_int8_convrot.safetensors` / `minimax_h3_audio_vae_fp32.safetensors` |
+| Diffusion Model | `minimax_h3_fl2va_pruned_bf16.safetensors` |
+| Text Encoder | `qwen3vl_32b_minimax_h3_bf16.safetensors`（type: `minimax`） |
+| VAE（映像 / 音声） | `minimax_h3_video_vae_fp16.safetensors` / `minimax_h3_audio_vae_fp32.safetensors` |
 | Steps | 20（Lightning LoRA 有効時は 6） |
 | Sampler | `res_multistep` + `simple`（denoise 1） |
 | 尺 | 2秒（`Float (duration)`） |
@@ -294,13 +317,13 @@ ComfyUI/
 ```
 ComfyUI/
 └── models/
-    ├── diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors
-    ├── text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors
+    ├── diffusion_models/minimax_h3_fl2va_pruned_bf16.safetensors
+    ├── text_encoders/qwen3vl_32b_minimax_h3_bf16.safetensors
     ├── loras/
     │   ├── minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors
     │   └── minimax_h3_fl2v_turbo_4step_v1.0_768p_comfyui_bf16.safetensors
     ├── vae/
-    │   ├── minimax_h3_video_vae_int8_convrot.safetensors
+    │   ├── minimax_h3_video_vae_fp16.safetensors
     │   └── minimax_h3_audio_vae_fp32.safetensors
     └── embeddings/minimaxh3_*.safetensors
 ```
@@ -330,7 +353,7 @@ ComfyUI/
 | 項目 | 値 |
 |---|---|
 | Checkpoint | `ltx-2.3-22b-dev.safetensors` |
-| Text Encoder | `gemma_3_12B_it_fp4_mixed.safetensors` |
+| Text Encoder | `gemma_3_12B_it.safetensors` |
 | 距離 LoRA | `ltx_2.3_22b_distilled_1.1_lora_dynamic_fro09_avg_rank_111_bf16.safetensors`（strength 0.5） |
 | プロンプト拡張 LoRA | `gemma-3-12b-it-abliterated_lora_rank64_bf16.safetensors` |
 | アップスケーラ | `ltx-2.3-spatial-upscaler-x2-1.1.safetensors` |
@@ -359,7 +382,7 @@ ComfyUI/
     ├── loras/
     │   ├── ltx_2.3_22b_distilled_1.1_lora_dynamic_fro09_avg_rank_111_bf16.safetensors
     │   └── gemma-3-12b-it-abliterated_lora_rank64_bf16.safetensors
-    ├── text_encoders/gemma_3_12B_it_fp4_mixed.safetensors
+    ├── text_encoders/gemma_3_12B_it.safetensors
     └── latent_upscale_models/ltx-2.3-spatial-upscaler-x2-1.1.safetensors
 ```
 
