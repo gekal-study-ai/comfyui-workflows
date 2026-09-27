@@ -337,7 +337,7 @@
                 ]
             },
             "widgets_values": [
-                "Replace only the mountains on the horizon of Picture 1 with an iconic, symmetrical, sharply defined snow-capped Mount Fuji, centered in the background, matching the existing light direction, haze and perspective.\n\nKeep everything else in Picture 1 exactly as it is: the same subject, pose and expression, the same foreground and mid-ground, the same composition, framing and crop, the same colors, exposure and shadows, and the same photographic texture. Do not restyle, re-render or reinterpret the rest of the image.",
+                "Replace only the background behind the man in Picture 1 with a clear blue summer sky and a snow-capped Mount Fuji on the horizon, keeping the same bright daylight and the same direction of sunlight as the original photo.\n\nKeep the man in Picture 1 exactly as he is: the same face, expression, glasses, hairstyle and stubble, the same white T-shirt and backpack straps, the same pose, framing and crop, and the same skin tones, exposure and photographic texture. Do not retouch or redraw the person, and keep the edge between him and the new background natural.",
                 "redrawing the whole scene, replacing the subject, different person, different composition, different crop, style transfer, illustration, painting, cartoon, 3d render, oversaturated, blurry, low quality, jpeg artifacts, watermark, text",
                 932654022600354,
                 "qwen_image_edit_2509_fp8_e4m3fn.safetensors",
